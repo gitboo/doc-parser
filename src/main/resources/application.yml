@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: doc-parser
+  http:
+    encoding:
+      enabled: true
+      charset: UTF-8
+
+#
+# logging for logback (logback.xml)
+#
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    org.springframework.core: INFO
+    org.springframework.beans: INFO
+    org.springframework.context: INFO
+    org.springframework.web: INFO
+    org.springframework.data: INFO
+    org.apache.http: INFO
+    org.apache.catalina: INFO
+    org.apache.coyote: INFO
+
+#
+# server
+#
+server:
+  use-forward-headers: true
+  connection-timeout: 600000
+  port: 8080
+  context-path: /
+

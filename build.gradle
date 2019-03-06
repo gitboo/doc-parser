@@ -1,0 +1,44 @@
+plugins {
+    id 'org.springframework.boot' version '1.5.19.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+group = 'com.wmp'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+springBoot {
+    mainClass = 'com.wmp.docparser.DocParserApplication'
+    executable = true
+}
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'org.webjars:jquery-ui:1.11.4'
+
+    compile 'com.google.guava:guava:27.0.1-jre'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8'
+    compileOnly 'org.projectlombok:lombok:1.18.2'
+    annotationProcessor 'org.projectlombok:lombok:1.18.2'
+
+    compile('org.apache.httpcomponents:httpclient') {
+        exclude(module: 'commons-logging')
+    }
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}

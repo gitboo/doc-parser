@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
+    <title>Doc Parser</title>
+</head>
+<body>
+<div id="app">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <label>URI</label>
+                <input v-model="form.uri" type="text" id="uri" placeholder="URI" class="form-control"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>Type</label>
+                <select v-model="form.htmlTag" class="form-control">
+                    <option v-for="option in options" v-bind:value="option.value">
+                        {{ option.text }}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>출력 묶음 단위</label>
+                <input v-model="form.bundles" type="number" class="form-control" min="1" placeholder="출력 단위"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>출력</label><br/>
+                <button v-on:click="submit" class="btn btn-primary form-control">Submit</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>몫</label>
+                <textarea v-model="quotient" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>나머지</label>
+                <textarea v-model="remainder" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>Error Info</label>
+                <input v-model="errInfo" type="text" class="form-control errinfo"/>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue@2.5.16"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            form: {
+                uri: '',
+                bundles: '',
+                htmlTag: 'true'
+            },
+            quotient: '',
+            remainder: '',
+            errInfo: '',
+            options: [
+                {text: 'Html Tag 포함', value: 'true'},
+                {text: 'Html Tag 제외', value: 'false'}
+            ]
+        },
+        methods: {
+            submit: function () {
+                this.errInfo = '';
+                if (this.form.uri.length === 0) {
+                    this.errInfo = 'please input uri';
+                    return;
+                }
+
+                if (!this.form.htmlTag || this.form.htmlTag.length === 0) {
+                    this.errInfo = 'please select Type';
+                    return;
+                }
+
+                if (!this.form.bundles || isNaN(this.form.bundles)) {
+                    this.errInfo = 'please input bundles';
+                    return;
+                }
+
+                axios.get('http://localhost:8080/docs/parsing', {
+                    params: {
+                        uri: this.form.uri,
+                        htmlTag: this.form.htmlTag,
+                        bundles: this.form.bundles
+                    }
+                }).then(function (response) {
+                    console.log(response);
+                    this.quotient = response.data.quotient;
+                    this.remainder = response.data.remainder;
+                }.bind(this))
+                    .catch(function (error) {
+                        console.error(error.response);
+                        this.errInfo = error.response.data.message;
+                    }.bind(this));
+            }
+        }
+    })
+</script>
+<style>
+    body {
+        background-color: #f6f6f6;
+        padding: 30px;
+    }
+
+    .form-control {
+        width: 300px;
+        margin-bottom: 10px;
+    }
+
+    .errinfo {
+        color: red;
+    }
+</style>
+</body>
+</html>
+
